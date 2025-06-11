@@ -324,3 +324,241 @@ public boolean isValidSudoku(char[][] board) {
         }
         return true;
     }
+
+//Range sum Query 2D Immutable 
+// class NumMatrix {
+
+//     // private int matrix[][];
+//     private int submat[][];
+
+//     public NumMatrix(int[][] matrix) {
+//         // this.matrix = matrix;
+//         int rows = matrix.length;
+//         int cols = matrix[0].length;
+//         submat = new int[rows+1][cols+1];
+//         for(int i=0;i<rows;i++){
+//             int prefix = 0;
+//             for(int j=0;j<cols;j++){
+//                 prefix += submat[i][j];
+//                 int above = submat[i][j+1];
+//                 submat[i+1][j+1] = prefix + above;
+//             }
+//         }
+
+//     }
+    
+//     public int sumRegion(int row1, int col1, int row2, int col2) {
+//         // int sum = 0;
+//         // for(int i = row1;i<=row2;i++){
+//         //     for(int j = col1;j<=col2;j++){
+//         //         sum += matrix[i][j];
+//         //     }
+//         // }
+//         // return sum;
+
+//         row1++;
+//         col1++;
+//         row2++;
+//         col2++;
+//         int bottomRight = submat[row2][col2];
+//         int above = submat[row1 - 1][col2];
+//         int left = submat[row2][col1 - 1];
+//         int topLeft = submat[row1 - 1][col1 - 1];
+//         return bottomRight-above-left+topLeft;
+//     }
+// }
+
+// /**
+//  * Your NumMatrix object will be instantiated and called as such:
+//  * NumMatrix obj = new NumMatrix(matrix);
+//  * int param_1 = obj.sumRegion(row1,col1,row2,col2);
+//  */
+
+
+public class NumMatrix {
+
+    private int[][] sumMat;
+
+    public NumMatrix(int[][] matrix) {
+        int ROWS = matrix.length, COLS = matrix[0].length;
+        sumMat = new int[ROWS + 1][COLS + 1];
+
+        for (int r = 0; r < ROWS; r++) {
+            int prefix = 0;
+            for (int c = 0; c < COLS; c++) {
+                prefix += matrix[r][c];
+                int above = sumMat[r][c + 1];
+                sumMat[r + 1][c + 1] = prefix + above;
+            }
+        }
+    }
+
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        row1++; col1++; row2++; col2++;
+        int bottomRight = sumMat[row2][col2];
+        int above = sumMat[row1 - 1][col2];
+        int left = sumMat[row2][col1 - 1];
+        int topLeft = sumMat[row1 - 1][col1 - 1];
+        return bottomRight - above - left + topLeft;
+    }
+}
+
+//Longest common Subsequence 
+public int longestConsecutive(int[] nums) {
+        
+        int n = nums.length;
+        // if(n == 0)return 0;
+        // Arrays.sort(nums);
+        // int cnt = 1;
+        // int max = 1;
+        // for(int i=1;i<n;i++){
+        //     if(nums[i] == nums[i-1])continue;
+        //     if(nums[i] == nums[i-1]+1){
+        //         cnt++;
+        //         max = Math.max(max,cnt);
+        //     }
+        //     else{
+        //     cnt = 1;
+        //     }
+        // }
+        // return max;
+
+        HashSet<Integer> s = new HashSet<>();
+        for(int num : nums)s.add(num);
+         
+         int max = 0;
+        for(int num : s){
+            if(!s.contains(num-1)){
+                int curr = num;
+                int cnt = 1;
+                while(s.contains(curr+1)){
+                    cnt++;
+                    curr++;
+                }
+                max = Math.max(cnt,max);
+            }
+        }
+        return max;
+    }
+
+//Best time to buy and sell stock 2 
+public int maxProfit(int[] prices) {
+        int total = 0;
+
+        for(int i=1;i<prices.length;i++){
+            int cost = prices[i]-prices[i-1];
+            if(cost >0){
+                total += cost;
+            }
+        }
+        return total;
+    }
+
+//Majority Element 2 
+ public List<Integer> majorityElement(int[] nums) {
+        List<Integer> ans = new ArrayList<>();
+        // HashMap<Integer,Integer> mp = new HashMap<>();
+        // for(int num : nums){
+        //     if(!mp.containsKey(num)){
+        //         mp.put(num,1);
+        //     }
+        //     else{
+        //         mp.put(num , mp.get(num)+1);
+        //     }
+        // }
+        // for(Map.Entry<Integer,Integer> e:mp.entrySet()){
+        //     if(e.getValue()>nums.length/3){
+        //         ans.add(e.getKey());
+        //     }
+        // }
+        // if(mp.isEmpty()){
+        //     ans.add(-1);
+        // }
+        // return ans;
+
+        int el1 = Integer.MIN_VALUE;
+        int el2 = Integer.MIN_VALUE;
+        int cnt1 = 0;
+        int cnt2 = 0;
+        for(int num : nums){
+            if(cnt1 == 0 && num != el2 ){
+                el1 = num;
+                cnt1 = 1;
+            }
+            else if(cnt2 == 0 && num != el1){
+                el2 = num;
+                cnt2 = 1;
+            }
+            else if(num == el1){
+                cnt1++;
+            }
+            else if(num == el2){
+                cnt2++;
+            }
+            else{
+                cnt1--;
+                cnt2--;
+            }
+
+        }
+
+        cnt1 = 0;
+        cnt2 =0;
+        for(int num : nums){
+            if(num == el1)cnt1++;
+            if(num == el2)cnt2++;
+        }
+        if(cnt1>nums.length/3){
+            ans.add(el1);
+        }
+         if(cnt2>nums.length/3){
+            ans.add(el2);
+        }
+        return ans;
+    }
+
+//Subarray sum equals K
+ public int subarraySum(int[] nums, int k) {
+       HashMap<Integer,Integer> mp = new HashMap<>();
+       mp.put(0,1);
+       int sum = 0;
+       int cnt = 0;
+       for(int num:nums){
+         sum += num;
+         int rem = sum-k;
+         if(mp.containsKey(rem)){
+            cnt += mp.get(rem);
+         }
+         if(!mp.containsKey(sum)){
+            mp.put(sum , 1);
+         }
+         else{
+            mp.put(sum , mp.get(sum)+1);
+         }
+       }
+       return cnt;
+    }
+
+//Find Missing positive 
+public int firstMissingPositive(int[] nums) {
+        int n = nums.length;
+        int i=0;
+        while(i<n){
+            int correctIdx = nums[i]-1;
+            if(correctIdx >= 0 && correctIdx<n && nums[i] != nums[correctIdx]){
+                int temp = nums[i];
+                nums[i] = nums[correctIdx];
+                nums[correctIdx] = temp;
+            }
+            else{
+                i++;
+            }
+        }
+
+        for(int idx=0;idx<n;idx++){
+            if(nums[idx] != idx+1){
+                return idx+1;
+            }
+        }
+        return n+1;
+    }
