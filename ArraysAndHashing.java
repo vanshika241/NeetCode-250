@@ -562,3 +562,173 @@ public int firstMissingPositive(int[] nums) {
         }
         return n+1;
     }
+
+// Design HashSet
+class MyHashSet {
+
+    HashMap<Integer,Object> set;
+    public MyHashSet() {
+        set = new HashMap<>();
+    }
+    
+    public void add(int key) {
+        if(!set.containsKey(key)){
+            set.put(key , null);
+        }
+    }
+    
+    public void remove(int key) {
+        if(set.containsKey(key)){
+            set.remove(key);
+        }
+    }
+    
+    public boolean contains(int key) {
+        if(set.containsKey(key)){
+            return true;
+        }
+        return false;
+    }
+}
+//Design HashMap
+class MyHashMap {
+
+    private class Node {
+        int key;
+        int value;
+
+        public Node(int key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    private int n; // current number of key-value pairs
+    private int N; // number of buckets
+    private LinkedList<Node>[] buckets;
+
+    @SuppressWarnings("unchecked")
+    public MyHashMap() {
+        this.N = 4;
+        this.buckets = new LinkedList[N];
+        for (int i = 0; i < N; i++) {
+            buckets[i] = new LinkedList<>();
+        }
+    }
+
+    private int hashFunction(int key) {
+        return Math.abs(key) % N;
+    }
+
+    private int searchInLL(int key, int bi) {
+        LinkedList<Node> ll = buckets[bi];
+        for (int i = 0; i < ll.size(); i++) {
+            if (ll.get(i).key == key) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void rehash() {
+        LinkedList<Node>[] oldBuckets = buckets;
+        N = N * 2;
+        buckets = new LinkedList[N];
+        for (int i = 0; i < N; i++) {
+            buckets[i] = new LinkedList<>();
+        }
+
+        for (LinkedList<Node> ll : oldBuckets) {
+            for (Node node : ll) {
+                put(node.key, node.value);
+            }
+        }
+    }
+
+    public void put(int key, int value) {
+        int bi = hashFunction(key);
+        int di = searchInLL(key, bi);
+
+        if (di == -1) {
+            buckets[bi].add(new Node(key, value));
+            n++;
+        } else {
+            Node node = buckets[bi].get(di);
+            node.value = value;
+        }
+
+        double lambda = (double) n / N;
+        if (lambda > 2.0) {
+            rehash();
+        }
+    }
+
+    public int get(int key) {
+        int bi = hashFunction(key);
+        int di = searchInLL(key, bi);
+
+        if (di == -1) {
+            return -1; // as per LeetCode spec
+        } else {
+            return buckets[bi].get(di).value;
+        }
+    }
+
+    public void remove(int key) {
+        int bi = hashFunction(key);
+        int di = searchInLL(key, bi);
+
+        if (di != -1) {
+            buckets[bi].remove(di);
+            n--;
+        }
+    }
+}
+
+//Product of array except self
+ public int[] productExceptSelf(int[] nums) {
+        int n = nums.length;
+        int ans[] = new int[n];
+       
+        // for(int i=0;i<n;i++){
+        //     int prod = 1;
+        //     for(int j=0;j<n;j++){
+        //         if(j != i){
+        //             prod *= nums[j];
+        //         }
+        //     }
+        //     ans[i] = prod;
+        // }
+        // return ans;
+
+        //prefix and suffix 
+        // int prefix[] = new int[n];
+        // int suffix[] = new int[n];
+        // prefix[0] = 1;
+        // suffix[n-1] = 1;
+        // for(int i=1;i<n;i++){
+        //     prefix[i] = prefix[i-1]*nums[i-1];
+        // }
+
+        // for(int i=n-2;i>=0;i--){
+        //     suffix[i] = suffix[i+1]*nums[i+1];
+        // }
+
+        // for(int i=0;i<n;i++){
+        //     ans[i] = prefix[i]*suffix[i];
+        // }
+
+        // return ans;
+
+        //optimize space
+        ans[0] = 1;
+        for(int i=1;i<n;i++){
+            ans[i] = ans[i-1]*nums[i-1];
+         }
+        int suffix = 1;
+        for(int i=n-1;i>=0;i--){
+            ans[i] = ans[i]*suffix;
+            suffix = suffix*nums[i];
+        }
+        return ans;
+    }
