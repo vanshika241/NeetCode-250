@@ -309,3 +309,87 @@ public int[] twoSum(int[] numbers, int target) {
         reverse(nums,k,n-1);
     }
 
+//Container with most water
+public int maxArea(int[] height) {
+        int maxarea = 0;
+        int i=0;
+        int j = height.length-1;
+        while(i<j){
+            int h = Math.min(height[i],height[j]);
+            int w = j-i;
+            int area = h*w;
+            maxarea = Math.max(maxarea, area);
+            if(height[i]<=height[j]){
+                i++;
+            }
+            else{
+               j--;
+            }
+        }
+        return maxarea;
+    }
+
+//Boats to save people
+public int numRescueBoats(int[] people, int limit) {
+        int cnt = 0;
+        Arrays.sort(people);
+        int i=0;
+        int j = people.length-1;
+        while(i <= j){
+            if(people[i]+people[j] <= limit ){
+                i++;
+                
+            }
+                j--;
+                cnt++;
+            
+        }
+        return cnt;
+    }
+//Trapping Rain water
+public int trap(int[] height) {
+        int n = height.length;
+        // int leftMax [] = new int[n];
+        // int rightMax [] = new int[n];
+        // leftMax[0] = height[0];
+        // for(int i=1;i<n;i++){
+        //     leftMax[i] = Math.max(leftMax[i-1],height[i]);
+        // }
+
+        //  rightMax[n-1] = height[n-1];
+        // for(int i=n-2;i>=0;i--){
+        //     rightMax[i] = Math.max(rightMax[i+1],height[i]);
+        // }
+
+        // int totalWater = 0;
+        // for(int i=0;i<n;i++){
+        //     int minH = Math.min(rightMax[i],leftMax[i]);
+        //     int water = minH-height[i];
+        //     totalWater += water;
+        // }
+        // return totalWater;
+
+        //2 pointer - 
+
+        int leftmax = -1;
+        int rightmax = -1;
+        int totalWater = 0;
+        int i=0;
+        int j =n-1;
+        while(i <=j){
+            leftmax = Math.max(leftmax,height[i]);
+            rightmax = Math.max(rightmax,height[j]);
+
+            if(leftmax<rightmax){
+                totalWater += leftmax-height[i];
+                i++;
+            }
+            else{
+                 totalWater += rightmax-height[j];
+                 j--;
+            }
+
+
+        }
+        return totalWater;
+    }
